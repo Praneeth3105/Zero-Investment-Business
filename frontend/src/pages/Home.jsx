@@ -10,20 +10,10 @@ function Home() {
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-  /*
-  ====================================================
-  CHECK WHETHER USER HAS ALREADY PURCHASED
-  ====================================================
-  */
-
   useEffect(() => {
     const checkPurchase = async () => {
       const token = localStorage.getItem("token");
 
-      /*
-      User is not logged in.
-      Nothing to check.
-      */
 
       if (!token) {
         setHasPurchased(false);
@@ -44,12 +34,6 @@ function Home() {
         const purchased = response.data.hasPurchased === true;
 
         setHasPurchased(purchased);
-
-        /*
-        Keep localStorage synchronized
-        with MongoDB.
-        */
-
         const currentUser = JSON.parse(localStorage.getItem("user") || "null");
 
         if (currentUser) {
@@ -60,11 +44,6 @@ function Home() {
       } catch (error) {
         console.error("HOME PURCHASE CHECK ERROR:", error);
 
-        /*
-        Do not break the Home page
-        if status check fails.
-        */
-
         setHasPurchased(false);
       } finally {
         setCheckingPurchase(false);
@@ -74,18 +53,9 @@ function Home() {
     checkPurchase();
   }, [API_URL]);
 
-  /*
-  ====================================================
-  BUY / READ BUTTON
-  ====================================================
-  */
-
   const buyBook = () => {
     const token = localStorage.getItem("token");
 
-    /*
-    Not logged in
-    */
 
     if (!token) {
       navigate("/login");
@@ -93,19 +63,12 @@ function Home() {
       return;
     }
 
-    /*
-    Already purchased
-    */
-
     if (hasPurchased) {
       navigate("/reader");
 
       return;
     }
 
-    /*
-    Not purchased
-    */
 
     navigate("/checkout");
   };

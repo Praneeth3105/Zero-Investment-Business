@@ -1,19 +1,11 @@
 import express from "express";
 import Razorpay from "razorpay";
 import crypto from "crypto";
-
 import auth from "../middleware/auth.js";
-
 import User from "../models/User.js";
 import Order from "../models/Order.js";
 
 const router = express.Router();
-
-/*
-====================================================
-RAZORPAY
-====================================================
-*/
 
 if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
   console.error("Razorpay environment variables are missing.");
@@ -25,19 +17,8 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-/*
-====================================================
-CREATE RAZORPAY ORDER
-====================================================
-*/
-
 router.post("/create-order", auth, async (req, res) => {
   try {
-    /*
-      ================================================
-      FIND USER
-      ================================================
-      */
 
     const user = await User.findById(req.userId);
 
@@ -48,42 +29,22 @@ router.post("/create-order", auth, async (req, res) => {
         message: "User not found",
       });
     }
-
-    /*
-      ================================================
-      CHECK WHETHER USER ALREADY PURCHASED
-      ================================================
-      */
-
     const existingPaidOrder = await Order.findOne({
       userId: req.userId,
 
       status: "paid",
     });
 
-    /*
-      ================================================
-      BLOCK DUPLICATE PURCHASE
-      ================================================
-      */
 
     if (user.hasPurchased === true || existingPaidOrder) {
       console.log("DUPLICATE PURCHASE BLOCKED:", user.email);
 
-      /*
-        Synchronize user if the paid
-        order exists but flag is false.
-        */
 
       if (existingPaidOrder && user.hasPurchased !== true) {
         user.hasPurchased = true;
-
         user.purchaseDate = existingPaidOrder.createdAt;
-
         user.razorpayOrderId = existingPaidOrder.razorpayOrderId;
-
         user.razorpayPaymentId = existingPaidOrder.razorpayPaymentId;
-
         await user.save();
       }
 
@@ -96,21 +57,9 @@ router.post("/create-order", auth, async (req, res) => {
       });
     }
 
-    /*
-      ================================================
-      PAYMENT AMOUNT
-      ================================================
-      */
-
     const amount = Number(process.env.BOOK_PRICE || 9900);
 
     const currency = process.env.BOOK_CURRENCY || "INR";
-
-    /*
-      ================================================
-      CREATE RAZORPAY ORDER
-      ================================================
-      */
 
     const razorpayOrder = await razorpay.orders.create({
       amount: amount,
@@ -120,11 +69,6 @@ router.post("/create-order", auth, async (req, res) => {
       receipt: `book_${Date.now()}`,
     });
 
-    /*
-      ================================================
-      SAVE ORDER IN MONGODB
-      ================================================
-      */
 
     const order = new Order({
       userId: req.userId,
@@ -143,12 +87,6 @@ router.post("/create-order", auth, async (req, res) => {
     console.log("Razorpay order created:", razorpayOrder.id);
 
     console.log("Customer:", user.email);
-
-    /*
-      ================================================
-      RESPONSE
-      ================================================
-      */
 
     res.json({
       success: true,
@@ -174,11 +112,6 @@ router.post("/create-order", auth, async (req, res) => {
   }
 });
 
-/*
-====================================================
-VERIFY RAZORPAY PAYMENT
-====================================================
-*/
 
 router.post("/verify", auth, async (req, res) => {
   try {
@@ -190,11 +123,6 @@ router.post("/verify", auth, async (req, res) => {
       razorpay_signature,
     } = req.body;
 
-    /*
-      ================================================
-      VALIDATE REQUEST
-      ================================================
-      */
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return res.status(400).json({
@@ -204,22 +132,12 @@ router.post("/verify", auth, async (req, res) => {
       });
     }
 
-    /*
-      ================================================
-      CREATE EXPECTED SIGNATURE
-      ================================================
-      */
 
     const generatedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest("hex");
 
-    /*
-      ================================================
-      VERIFY SIGNATURE
-      ================================================
-      */
 
     if (generatedSignature !== razorpay_signature) {
       console.log("INVALID RAZORPAY SIGNATURE");
@@ -230,12 +148,6 @@ router.post("/verify", auth, async (req, res) => {
         message: "Payment verification failed",
       });
     }
-
-    /*
-      ================================================
-      FIND ORDER
-      ================================================
-      */
 
     const order = await Order.findOne({
       razorpayOrderId: razorpay_order_id,
@@ -251,11 +163,6 @@ router.post("/verify", auth, async (req, res) => {
       });
     }
 
-    /*
-      ================================================
-      PREVENT DUPLICATE VERIFICATION
-      ================================================
-      */
 
     if (order.status === "paid") {
       return res.json({
@@ -271,24 +178,12 @@ router.post("/verify", auth, async (req, res) => {
       });
     }
 
-    /*
-      ================================================
-      MARK ORDER AS PAID
-      ================================================
-      */
 
     order.status = "paid";
 
     order.razorpayPaymentId = razorpay_payment_id;
 
     await order.save();
-
-    /*
-      ================================================
-      FIND USER
-      ================================================
-      */
-
     const user = await User.findById(req.userId);
 
     if (!user) {
@@ -299,51 +194,21 @@ router.post("/verify", auth, async (req, res) => {
       });
     }
 
-    /*
-      ================================================
-      GRANT BOOK ACCESS
-      ================================================
-      */
-
     user.hasPurchased = true;
-
     user.purchaseDate = new Date();
-
     user.razorpayOrderId = razorpay_order_id;
-
     user.razorpayPaymentId = razorpay_payment_id;
-
     await user.save();
 
-    /*
-      ================================================
-      CONSOLE
-      ================================================
-      */
-
     console.log("\n================================");
-
     console.log("PAYMENT VERIFIED SUCCESSFULLY");
-
     console.log("================================");
-
     console.log("Customer:", user.email);
-
     console.log("Order:", razorpay_order_id);
-
     console.log("Payment:", razorpay_payment_id);
-
     console.log("Status:", order.status);
-
     console.log("Book Access:", user.hasPurchased);
-
     console.log("================================\n");
-
-    /*
-      ================================================
-      RESPONSE
-      ================================================
-      */
 
     res.json({
       success: true,

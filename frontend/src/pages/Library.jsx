@@ -4,18 +4,9 @@ import { useNavigate } from "react-router-dom";
 
 function Library() {
   const navigate = useNavigate();
-
   const [loading, setLoading] = useState(true);
-
   const [purchased, setPurchased] = useState(false);
-
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-
-  /*
-  ====================================================
-  CHECK PURCHASE FROM BACKEND
-  ====================================================
-  */
 
   useEffect(() => {
     const checkLibrary = async () => {
@@ -39,10 +30,6 @@ function Library() {
         const hasPurchased = response.data.hasPurchased === true;
 
         setPurchased(hasPurchased);
-
-        /*
-        Synchronize localStorage
-        */
 
         if (response.data.user) {
           localStorage.setItem("user", JSON.stringify(response.data.user));

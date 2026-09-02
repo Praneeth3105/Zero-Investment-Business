@@ -17,12 +17,6 @@ function Checkout() {
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-  /*
-  ====================================================
-  CHECK USER + PURCHASE STATUS
-  ====================================================
-  */
-
   useEffect(() => {
     const checkPurchase = async () => {
       if (!token) {
@@ -41,31 +35,15 @@ function Checkout() {
         });
 
         console.log("CHECKOUT BOOK STATUS:", response.data);
-
-        /*
-        Update user information
-        */
-
         if (response.data.user) {
           setUser(response.data.user);
 
           localStorage.setItem("user", JSON.stringify(response.data.user));
         }
-
-        /*
-        ==================================================
-        ALREADY PURCHASED
-        ==================================================
-        */
-
         if (response.data.hasPurchased === true) {
           console.log("USER ALREADY PURCHASED - NO PAYMENT");
 
           setAlreadyPurchased(true);
-
-          /*
-          Send directly to reader.
-          */
 
           navigate("/reader", {
             replace: true,
@@ -92,12 +70,6 @@ function Checkout() {
     checkPurchase();
   }, [API_URL, navigate, token]);
 
-  /*
-  ====================================================
-  LOAD RAZORPAY
-  ====================================================
-  */
-
   const loadRazorpay = () => {
     return new Promise((resolve) => {
       if (window.Razorpay) {
@@ -122,17 +94,7 @@ function Checkout() {
     });
   };
 
-  /*
-  ====================================================
-  START PAYMENT
-  ====================================================
-  */
-
   const startPayment = async () => {
-    /*
-    Never start payment if already purchased.
-    */
-
     if (alreadyPurchased) {
       navigate("/reader");
 
@@ -148,12 +110,6 @@ function Checkout() {
     setPaymentLoading(true);
 
     try {
-      /*
-      ==================================================
-      DOUBLE CHECK PURCHASE
-      ==================================================
-      */
-
       const statusResponse = await axios.get(`${API_URL}/api/book/status`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -162,9 +118,6 @@ function Checkout() {
 
       console.log("PAYMENT PRE-CHECK:", statusResponse.data);
 
-      /*
-      User already purchased.
-      */
 
       if (statusResponse.data.hasPurchased === true) {
         alert("You have already purchased this book.");
@@ -174,12 +127,6 @@ function Checkout() {
         return;
       }
 
-      /*
-      ==================================================
-      LOAD RAZORPAY
-      ==================================================
-      */
-
       const razorpayLoaded = await loadRazorpay();
 
       if (!razorpayLoaded) {
@@ -188,11 +135,6 @@ function Checkout() {
         );
       }
 
-      /*
-      ==================================================
-      CREATE ORDER
-      ==================================================
-      */
 
       console.log("Creating Razorpay order...");
 
@@ -209,12 +151,6 @@ function Checkout() {
       );
 
       console.log("Create order response:", response.data);
-
-      /*
-      ==================================================
-      HANDLE ALREADY PURCHASED FROM BACKEND
-      ==================================================
-      */
 
       if (response.data.alreadyPurchased === true) {
         alert("You have already purchased this book.");
@@ -233,12 +169,6 @@ function Checkout() {
       if (!key) {
         throw new Error("Razorpay key was not returned by the server.");
       }
-
-      /*
-      ==================================================
-      RAZORPAY OPTIONS
-      ==================================================
-      */
 
       const options = {
         key: key,
@@ -273,11 +203,6 @@ function Checkout() {
           try {
             console.log("Razorpay payment response:", paymentResponse);
 
-            /*
-            ============================================
-            VERIFY PAYMENT
-            ============================================
-            */
 
             const verifyResponse = await axios.post(
               `${API_URL}/api/payment/verify`,
@@ -300,9 +225,7 @@ function Checkout() {
             console.log("Payment verification:", verifyResponse.data);
 
             if (verifyResponse.data.success) {
-              /*
-              Update local user immediately.
-              */
+
 
               const currentUser = JSON.parse(
                 localStorage.getItem("user") || "null",
@@ -339,13 +262,6 @@ function Checkout() {
           },
         },
       };
-
-      /*
-      ==================================================
-      OPEN RAZORPAY
-      ==================================================
-      */
-
       console.log("Opening Razorpay...");
 
       const razorpay = new window.Razorpay(options);
@@ -369,12 +285,6 @@ function Checkout() {
       console.error("Status:", error.response?.status);
 
       console.error("Server response:", error.response?.data);
-
-      /*
-      ==================================================
-      BACKEND SAYS ALREADY PURCHASED
-      ==================================================
-      */
 
       if (
         error.response?.status === 409 &&
@@ -401,12 +311,6 @@ function Checkout() {
     }
   };
 
-  /*
-  ====================================================
-  LOADING
-  ====================================================
-  */
-
   if (loading) {
     return (
       <div className="checkout-page">
@@ -418,12 +322,6 @@ function Checkout() {
       </div>
     );
   }
-
-  /*
-  ====================================================
-  ALREADY PURCHASED
-  ====================================================
-  */
 
   if (alreadyPurchased) {
     return (
@@ -447,12 +345,6 @@ function Checkout() {
       </div>
     );
   }
-
-  /*
-  ====================================================
-  NORMAL CHECKOUT PAGE
-  ====================================================
-  */
 
   return (
     <div className="checkout-page">

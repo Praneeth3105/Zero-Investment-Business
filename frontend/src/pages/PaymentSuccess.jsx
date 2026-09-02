@@ -18,11 +18,6 @@ function PaymentSuccess() {
           return;
         }
 
-        /*
-          Ask backend for the latest
-          purchase status.
-          */
-
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/book/status`,
 
@@ -34,10 +29,6 @@ function PaymentSuccess() {
         );
 
         console.log("Updated purchase:", response.data);
-
-        /*
-          Update localStorage
-          */
 
         if (response.data.user) {
           localStorage.setItem(

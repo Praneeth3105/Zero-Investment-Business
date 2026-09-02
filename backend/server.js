@@ -1,10 +1,7 @@
 import "dotenv/config";
-
 import express from "express";
 import cors from "cors";
-
 import connectDB from "./config/db.js";
-
 import authRoutes from "./routes/auth.js";
 import paymentRoutes from "./routes/payment.js";
 import bookRoutes from "./routes/book.js";
@@ -30,9 +27,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
-
 app.use("/api/payment", paymentRoutes);
-
 app.use("/api/book", bookRoutes);
 
 const PORT = process.env.PORT || 8000;

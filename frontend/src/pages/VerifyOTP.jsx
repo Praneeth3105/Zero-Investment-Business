@@ -1,18 +1,13 @@
 import { useState } from "react";
-
 import { useNavigate } from "react-router-dom";
-
 import axios from "axios";
 
 function VerifyOTP() {
   const navigate = useNavigate();
 
   const email = localStorage.getItem("loginEmail");
-
   const [otp, setOtp] = useState("");
-
   const [loading, setLoading] = useState(false);
-
   const verify = async (e) => {
     e.preventDefault();
 
