@@ -27,7 +27,6 @@ function Checkout() {
     const checkPurchase = async () => {
       if (!token) {
         navigate("/login");
-
         return;
       }
 
@@ -62,10 +61,6 @@ function Checkout() {
           console.log("USER ALREADY PURCHASED - NO PAYMENT");
 
           setAlreadyPurchased(true);
-
-          /*
-          Send directly to reader.
-          */
 
           navigate("/reader", {
             replace: true,
@@ -102,7 +97,6 @@ function Checkout() {
     return new Promise((resolve) => {
       if (window.Razorpay) {
         resolve(true);
-
         return;
       }
 
@@ -135,13 +129,11 @@ function Checkout() {
 
     if (alreadyPurchased) {
       navigate("/reader");
-
       return;
     }
 
     if (!token) {
       navigate("/login");
-
       return;
     }
 
@@ -281,7 +273,6 @@ function Checkout() {
 
             const verifyResponse = await axios.post(
               `${API_URL}/api/payment/verify`,
-
               {
                 razorpay_order_id: paymentResponse.razorpay_order_id,
 
@@ -289,7 +280,6 @@ function Checkout() {
 
                 razorpay_signature: paymentResponse.razorpay_signature,
               },
-
               {
                 headers: {
                   Authorization: `Bearer ${token}`,

@@ -195,7 +195,9 @@ function Home() {
         <div className="feature-grid">
           <div className="feature-card">
             <span>01</span>
+
             <h3>Business Ideas</h3>
+
             <p>
               Discover practical business models that don't require heavy
               initial investment.
@@ -204,7 +206,9 @@ function Home() {
 
           <div className="feature-card">
             <span>02</span>
+
             <h3>Start From Zero</h3>
+
             <p>
               Understand how to start with the resources and skills you already
               have.
@@ -213,7 +217,9 @@ function Home() {
 
           <div className="feature-card">
             <span>03</span>
+
             <h3>Find Customers</h3>
+
             <p>
               Learn simple approaches to reach potential customers without large
               advertising budgets.
@@ -222,7 +228,9 @@ function Home() {
 
           <div className="feature-card">
             <span>04</span>
+
             <h3>Build & Grow</h3>
+
             <p>Turn a small starting point into a repeatable business.</p>
           </div>
         </div>

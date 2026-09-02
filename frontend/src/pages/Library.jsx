@@ -6,7 +6,6 @@ function Library() {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
-
   const [purchased, setPurchased] = useState(false);
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
@@ -69,9 +68,21 @@ function Library() {
     checkLibrary();
   }, [API_URL, navigate]);
 
+  /*
+  ====================================================
+  LOADING
+  ====================================================
+  */
+
   if (loading) {
     return <div className="center">Loading...</div>;
   }
+
+  /*
+  ====================================================
+  LIBRARY
+  ====================================================
+  */
 
   return (
     <div className="library-page">
