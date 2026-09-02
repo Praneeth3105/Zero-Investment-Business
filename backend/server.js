@@ -25,7 +25,6 @@ app.get("/api/health", (req, res) => {
     message: "0% Investment Business API running",
   });
 });
-
 app.use("/api/auth", authRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/book", bookRoutes);
