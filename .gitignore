@@ -33,3 +33,5 @@ backend/private/
 
 # Other local files
 *.local
+
+credentials/
