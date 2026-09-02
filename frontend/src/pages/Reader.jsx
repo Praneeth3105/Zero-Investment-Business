@@ -27,17 +27,16 @@ function Reader() {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-            responseType: "blob",
           },
         );
 
-        const blob = new Blob([response.data], {
-          type: "application/pdf",
-        });
+        console.log("Book access response:", response.data);
 
-        const url = URL.createObjectURL(blob);
+        if (!response.data?.success || !response.data?.url) {
+          throw new Error("Book URL was not returned");
+        }
 
-        setPdfUrl(url);
+        setPdfUrl(response.data.url);
       } catch (error) {
         console.error("Book access error:", error);
 
@@ -46,7 +45,7 @@ function Reader() {
         } else if (error.response?.status === 401) {
           setError("Your login session has expired.");
         } else {
-          setError("Unable to load the book.");
+          setError(error.response?.data?.message || "Unable to load the book.");
         }
       } finally {
         setLoading(false);
@@ -62,35 +61,19 @@ function Reader() {
     };
 
     document.addEventListener("contextmenu", preventAction);
-
     document.addEventListener("copy", preventAction);
-
     document.addEventListener("cut", preventAction);
-
     document.addEventListener("selectstart", preventAction);
-
     document.addEventListener("dragstart", preventAction);
 
     return () => {
       document.removeEventListener("contextmenu", preventAction);
-
       document.removeEventListener("copy", preventAction);
-
       document.removeEventListener("cut", preventAction);
-
       document.removeEventListener("selectstart", preventAction);
-
       document.removeEventListener("dragstart", preventAction);
     };
   }, []);
-
-  useEffect(() => {
-    return () => {
-      if (pdfUrl) {
-        URL.revokeObjectURL(pdfUrl);
-      }
-    };
-  }, [pdfUrl]);
 
   if (loading) {
     return (

@@ -1,197 +1,120 @@
 import express from "express";
-import fs from "fs";
-import path from "path";
 
+import auth from "../middleware/auth.js";
 import User from "../models/User.js";
 import Order from "../models/Order.js";
 
-import auth from "../middleware/auth.js";
+import supabase from "../config/supabase.js";
 
 const router = express.Router();
 
+/*
+====================================================
+BOOK STATUS
+====================================================
+*/
+
 router.get("/status", auth, async (req, res) => {
   try {
-    console.log("\n========== BOOK STATUS ==========");
-
-    console.log("User ID:", req.userId);
-
     const user = await User.findById(req.userId);
 
     if (!user) {
-      console.log("User not found");
-
       return res.status(404).json({
         success: false,
         message: "User not found",
       });
     }
+
     const paidOrder = await Order.findOne({
       userId: req.userId,
-
       status: "paid",
-    }).sort({
-      createdAt: -1,
     });
 
-    const hasPaidOrder = !!paidOrder;
+    const hasAccess = user.hasPurchased || !!paidOrder;
 
-    const hasAccess = user.hasPurchased === true || hasPaidOrder;
-
-
-    if (hasPaidOrder && user.hasPurchased !== true) {
+    if (paidOrder && !user.hasPurchased) {
       user.hasPurchased = true;
-
-      user.purchaseDate = paidOrder.createdAt || new Date();
-
+      user.purchaseDate = paidOrder.updatedAt || new Date();
       user.razorpayOrderId = paidOrder.razorpayOrderId;
-
       user.razorpayPaymentId = paidOrder.razorpayPaymentId;
 
       await user.save();
-
-      console.log("User purchase status synchronized.");
     }
 
-    console.log("Email:", user.email);
-    console.log("User hasPurchased:", user.hasPurchased);
-    console.log("Paid order:", hasPaidOrder);
-    console.log("Final access:", hasAccess);
-
-    res.json({
+    return res.json({
       success: true,
-
       hasPurchased: hasAccess,
-
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        hasPurchased: hasAccess,
-      },
-
-      purchase: hasPaidOrder
-        ? {
-            orderId: paidOrder.razorpayOrderId,
-            paymentId: paidOrder.razorpayPaymentId,
-            amount: paidOrder.amount,
-            currency: paidOrder.currency,
-            purchasedAt: paidOrder.createdAt,
-          }
-        : null,
     });
   } catch (error) {
     console.error("BOOK STATUS ERROR:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-
       message: "Unable to check book access",
     });
   }
 });
 
-
+/*
+====================================================
+BOOK ACCESS
+====================================================
+*/
 
 router.get("/access", auth, async (req, res) => {
   try {
-    console.log("\n========== BOOK ACCESS ==========");
-
-    console.log("User ID:", req.userId);
-
-
     const user = await User.findById(req.userId);
 
     if (!user) {
-      console.log("User not found");
-
       return res.status(404).json({
         success: false,
-
         message: "User not found",
       });
     }
 
     const paidOrder = await Order.findOne({
       userId: req.userId,
-
       status: "paid",
-    }).sort({
-      createdAt: -1,
     });
 
-    const hasAccess = user.hasPurchased === true || !!paidOrder;
+    const hasAccess = user.hasPurchased || !!paidOrder;
 
-    console.log("Email:", user.email);
-    console.log("User hasPurchased:", user.hasPurchased);
-    console.log("Paid order:", !!paidOrder);
-    console.log("Final access:", hasAccess);
     if (!hasAccess) {
-      console.log("ACCESS DENIED");
-
       return res.status(403).json({
         success: false,
-
-        message: "You have not purchased this book",
+        message: "Book purchase required",
       });
     }
 
-    const bookPath = path.join(process.cwd(), "private", "book.pdf");
+    /*
+    ================================================
+    CREATE TEMPORARY SUPABASE URL
+    ================================================
+    */
 
-    console.log("Book path:", bookPath);
+    const { data, error } = await supabase.storage
+      .from(process.env.SUPABASE_BUCKET)
+      .createSignedUrl("book.pdf", 60 * 60);
 
-    if (!fs.existsSync(bookPath)) {
-      console.log("PDF NOT FOUND");
+    if (error) {
+      console.error("SUPABASE SIGNED URL ERROR:", error);
 
-      return res.status(404).json({
-        success: false,
-
-        message: "Book PDF not found on server",
-      });
-    }
-    const stats = fs.statSync(bookPath);
-
-    console.log("PDF size:", stats.size, "bytes");
-
-    if (stats.size <= 0) {
       return res.status(500).json({
         success: false,
-
-        message: "Book PDF is empty",
+        message: "Unable to access book",
       });
     }
 
-
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", 'inline; filename="book.pdf"');
-    res.setHeader("Content-Length", stats.size);
-    res.setHeader(
-      "Cache-Control",
-      "no-store, no-cache, must-revalidate, private",
-    );
-
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
-    res.setHeader("X-Content-Type-Options", "nosniff");
-
-    const stream = fs.createReadStream(bookPath);
-
-    stream.on("error", (error) => {
-      console.error("PDF STREAM ERROR:", error);
+    return res.json({
+      success: true,
+      url: data.signedUrl,
     });
-
-    console.log("SUCCESS: Sending PDF");
-
-    stream.pipe(res);
   } catch (error) {
     console.error("BOOK ACCESS ERROR:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-
-      message: "Unable to load book",
-
-      error: error.message,
+      message: "Unable to load the book",
     });
   }
 });
