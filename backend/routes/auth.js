@@ -1,29 +1,21 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
 import User from "../models/User.js";
 import { generateOTP } from "../utils/otp.js";
 
 const router = express.Router();
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-/*
-SEND OTP
-*/
 router.post("/send-otp", async (req, res) => {
   try {
     const { name, email, phone } = req.body;
 
     if (!name || !email) {
       return res.status(400).json({
+        success: false,
         message: "Name and email are required",
       });
     }
@@ -38,7 +30,7 @@ router.post("/send-otp", async (req, res) => {
       user = await User.create({
         name,
         email: normalizedEmail,
-        phone,
+        phone: phone || "",
       });
     } else {
       user.name = name;
@@ -53,53 +45,71 @@ router.post("/send-otp", async (req, res) => {
     const otp = generateOTP();
 
     user.otp = otp;
-
     user.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
 
     await user.save();
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: normalizedEmail,
+    console.log("OTP generated for:", normalizedEmail);
+
+    const { data, error } = await resend.emails.send({
+      from: "0% Investment Business <onboarding@resend.dev>",
+      to: [normalizedEmail],
       subject: "Your 0% Investment Business Login OTP",
       html: `
-        <div style="font-family:Arial;padding:30px">
-
+        <div style="font-family:Arial,sans-serif;padding:30px;max-width:600px;margin:auto;">
           <h2>0% Investment Business</h2>
 
           <p>Your login verification code is:</p>
 
-          <h1 style="letter-spacing:8px">
+          <h1 style="letter-spacing:8px;font-size:36px;">
             ${otp}
           </h1>
 
-          <p>
-            This OTP expires in 10 minutes.
-          </p>
+          <p>This OTP expires in 10 minutes.</p>
 
+          <p>
+            If you did not request this OTP, you can safely ignore this email.
+          </p>
         </div>
       `,
     });
 
-    res.json({
+    if (error) {
+      console.error("RESEND EMAIL ERROR:", error);
+
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send OTP email",
+      });
+    }
+
+    console.log("OTP email sent successfully.");
+    console.log("Resend email ID:", data?.id);
+
+    return res.json({
       success: true,
       message: "OTP sent successfully",
     });
   } catch (error) {
-    console.error(error);
+    console.error("SEND OTP ERROR:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
+      success: false,
       message: "Failed to send OTP",
     });
   }
 });
 
-/*
-VERIFY OTP
-*/
 router.post("/verify-otp", async (req, res) => {
   try {
     const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and OTP are required",
+      });
+    }
 
     const user = await User.findOne({
       email: email.toLowerCase().trim(),
@@ -107,6 +117,7 @@ router.post("/verify-otp", async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
+        success: false,
         message: "User not found",
       });
     }
@@ -118,6 +129,7 @@ router.post("/verify-otp", async (req, res) => {
       user.otpExpires < new Date()
     ) {
       return res.status(400).json({
+        success: false,
         message: "Invalid or expired OTP",
       });
     }
@@ -137,10 +149,9 @@ router.post("/verify-otp", async (req, res) => {
       },
     );
 
-    res.json({
+    return res.json({
       success: true,
       token,
-
       user: {
         id: user._id,
         name: user.name,
@@ -149,9 +160,10 @@ router.post("/verify-otp", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error(error);
+    console.error("VERIFY OTP ERROR:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
+      success: false,
       message: "OTP verification failed",
     });
   }
