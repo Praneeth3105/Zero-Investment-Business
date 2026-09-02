@@ -1,14 +1,55 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import { Resend } from "resend";
+import { google } from "googleapis";
 
 import User from "../models/User.js";
 import { generateOTP } from "../utils/otp.js";
 
 const router = express.Router();
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+/*
+  Gmail API configuration
+  These values must be stored in Render Environment Variables.
+*/
+const oauth2Client = new google.auth.OAuth2(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  "http://localhost:3000/oauth2callback",
+);
 
+oauth2Client.setCredentials({
+  refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
+});
+
+const gmail = google.gmail({
+  version: "v1",
+  auth: oauth2Client,
+});
+
+/*
+  Create Gmail message
+*/
+const createEmailMessage = ({ to, subject, html }) => {
+  const message = [
+    `From: 0% Investment Business <${process.env.GMAIL_SENDER}>`,
+    `To: ${to}`,
+    `Subject: ${subject}`,
+    "MIME-Version: 1.0",
+    "Content-Type: text/html; charset=UTF-8",
+    "",
+    html,
+  ].join("\r\n");
+
+  return Buffer.from(message)
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+};
+
+/*
+  SEND OTP
+*/
 router.post("/send-otp", async (req, res) => {
   try {
     const { name, email, phone } = req.body;
@@ -42,6 +83,9 @@ router.post("/send-otp", async (req, res) => {
       await user.save();
     }
 
+    /*
+      Generate OTP
+    */
     const otp = generateOTP();
 
     user.otp = otp;
@@ -51,55 +95,93 @@ router.post("/send-otp", async (req, res) => {
 
     console.log("OTP generated for:", normalizedEmail);
 
-    const { data, error } = await resend.emails.send({
-      from: "0% Investment Business <onboarding@resend.dev>",
-      to: [normalizedEmail],
+    /*
+      Create email
+    */
+    const html = `
+      <div style="
+        font-family: Arial, sans-serif;
+        padding: 30px;
+        max-width: 600px;
+        margin: auto;
+        background: #ffffff;
+      ">
+
+        <h2 style="margin-bottom: 20px;">
+          0% Investment Business
+        </h2>
+
+        <p>
+          Hello ${name},
+        </p>
+
+        <p>
+          Your login verification code is:
+        </p>
+
+        <h1 style="
+          letter-spacing: 8px;
+          font-size: 36px;
+          margin: 20px 0;
+        ">
+          ${otp}
+        </h1>
+
+        <p>
+          This OTP expires in 10 minutes.
+        </p>
+
+        <p>
+          If you did not request this OTP, you can safely ignore this email.
+        </p>
+
+        <p style="margin-top: 30px;">
+          Regards,<br>
+          0% Investment Business
+        </p>
+
+      </div>
+    `;
+
+    const rawMessage = createEmailMessage({
+      to: normalizedEmail,
       subject: "Your 0% Investment Business Login OTP",
-      html: `
-        <div style="font-family:Arial,sans-serif;padding:30px;max-width:600px;margin:auto;">
-          <h2>0% Investment Business</h2>
-
-          <p>Your login verification code is:</p>
-
-          <h1 style="letter-spacing:8px;font-size:36px;">
-            ${otp}
-          </h1>
-
-          <p>This OTP expires in 10 minutes.</p>
-
-          <p>
-            If you did not request this OTP, you can safely ignore this email.
-          </p>
-        </div>
-      `,
+      html,
     });
 
-    if (error) {
-      console.error("RESEND EMAIL ERROR:", error);
-
-      return res.status(500).json({
-        success: false,
-        message: "Failed to send OTP email",
-      });
-    }
+    /*
+      Send email using Gmail API
+    */
+    const result = await gmail.users.messages.send({
+      userId: "me",
+      requestBody: {
+        raw: rawMessage,
+      },
+    });
 
     console.log("OTP email sent successfully.");
-    console.log("Resend email ID:", data?.id);
+    console.log("Gmail message ID:", result.data.id);
 
     return res.json({
       success: true,
       message: "OTP sent successfully",
     });
   } catch (error) {
-    console.error("SEND OTP ERROR:", error);
+    console.error(
+      "GMAIL OTP ERROR:",
+      error.response?.data || error.message || error,
+    );
 
     return res.status(500).json({
       success: false,
-      message: "Failed to send OTP",
+      message: "Failed to send OTP email",
     });
   }
 });
 
+/*
+  VERIFY OTP
+*/
 router.post("/verify-otp", async (req, res) => {
   try {
     const { email, otp } = req.body;
