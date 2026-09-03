@@ -177,7 +177,7 @@ function Checkout() {
 
         currency: currency,
 
-        name: "0% Investment Business",
+        name: "Low Investment Business",
 
         description: "Digital Book Purchase",
 
@@ -192,7 +192,7 @@ function Checkout() {
         },
 
         notes: {
-          product: "0% Investment Business",
+          product: "Low Investment Business",
         },
 
         theme: {
@@ -351,7 +351,7 @@ function Checkout() {
       <div className="checkout-card">
         <span className="badge">DIGITAL BOOK</span>
 
-        <h1>0% Investment Business</h1>
+        <h1>Low Investment Business</h1>
 
         <p className="checkout-subtitle">
           Complete your purchase to unlock the book.

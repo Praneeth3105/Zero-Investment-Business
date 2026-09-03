@@ -73,17 +73,12 @@ function Library() {
       {purchased ? (
         <div className="book-library-card">
           <div className="mini-cover">
-            <strong>0%</strong>
-
-            <span>
-              INVESTMENT
-              <br />
-              BUSINESS
-            </span>
+            <h3>The Complete Guide</h3>
+            <h2>Low Investment Business Book</h2>
           </div>
 
           <div className="library-info">
-            <h2>0% Investment Business</h2>
+            <h2>Low-Investment Business Ideas - Start Under ₹30,000 </h2>
 
             <p>Digital Business Playbook</p>
 

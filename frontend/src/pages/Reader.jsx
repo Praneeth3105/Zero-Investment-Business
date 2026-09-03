@@ -110,7 +110,7 @@ function Reader() {
     <div className="reader-page">
       <div className="reader-toolbar">
         <div className="reader-title">
-          <strong>0% Investment Business</strong>
+          <strong>Low Investment Business</strong>
 
           <span>Licensed to {user?.email}</span>
         </div>
@@ -126,7 +126,7 @@ function Reader() {
         {pdfUrl && (
           <iframe
             src={pdfUrl}
-            title="0% Investment Business"
+            title="Low Investment Business"
             className="pdf-frame"
           />
         )}

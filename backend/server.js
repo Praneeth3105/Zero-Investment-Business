@@ -22,7 +22,7 @@ app.use(express.json());
 app.get("/api/health", (req, res) => {
   res.json({
     success: true,
-    message: "0% Investment Business API running",
+    message: "Business API running",
   });
 });
 app.use("/api/auth", authRoutes);

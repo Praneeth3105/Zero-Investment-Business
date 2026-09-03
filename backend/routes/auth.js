@@ -31,7 +31,7 @@ const gmail = google.gmail({
 */
 const createEmailMessage = ({ to, subject, html }) => {
   const message = [
-    `From: 0% Investment Business <${process.env.GMAIL_SENDER}>`,
+    `From: Low Investment Business <${process.env.GMAIL_SENDER}>`,
     `To: ${to}`,
     `Subject: ${subject}`,
     "MIME-Version: 1.0",
@@ -108,7 +108,7 @@ router.post("/send-otp", async (req, res) => {
       ">
 
         <h2 style="margin-bottom: 20px;">
-          0% Investment Business
+          Low Investment Business
         </h2>
 
         <p>
@@ -137,7 +137,7 @@ router.post("/send-otp", async (req, res) => {
 
         <p style="margin-top: 30px;">
           Regards,<br>
-          0% Investment Business
+          Low Investment Business Team
         </p>
 
       </div>
@@ -145,7 +145,7 @@ router.post("/send-otp", async (req, res) => {
 
     const rawMessage = createEmailMessage({
       to: normalizedEmail,
-      subject: "Your 0% Investment Business Login OTP",
+      subject: "Your Low Investment Business Login OTP",
       html,
     });
 

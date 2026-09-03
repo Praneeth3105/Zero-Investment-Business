@@ -58,7 +58,7 @@ function PaymentSuccess() {
 
         <p>
           Thank you for purchasing
-          <strong> 0% Investment Business</strong>.
+          <strong> Low Investment Business</strong>.
         </p>
 
         <p>Your book has been added to your library.</p>

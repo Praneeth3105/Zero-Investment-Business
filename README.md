@@ -1,6 +1,6 @@
-# 📚 0% Investment Business
+# 📚 Low Investment Business
 
-A full-stack digital e-book platform that allows users to purchase the **"0% Investment Business"** e-book through Razorpay and access their purchased book from a personal library.
+A full-stack digital e-book platform that allows users to purchase the **"Low Investment Business"** e-book through Razorpay and access their purchased book from a personal library.
 
 The application is built using **React, Node.js, Express.js, MongoDB, and Razorpay**.
 

@@ -80,7 +80,7 @@ function Home() {
           <span className="badge">Digital Business Guide</span>
 
           <h2>Low-Investment Business Ideas - Start Under ₹30,000</h2>
-
+<br></br>
           <p className="hero-subtitle">
             Start a business without putting your savings at risk.
           </p>
