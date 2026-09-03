@@ -360,7 +360,7 @@ function Checkout() {
         <div className="checkout-product">
           <span>Book</span>
 
-          <strong>₹99</strong>
+          <strong>₹199</strong>
         </div>
 
         <div className="checkout-details">
@@ -382,7 +382,7 @@ function Checkout() {
           onClick={startPayment}
           disabled={paymentLoading}
         >
-          {paymentLoading ? "Opening Payment..." : "Pay ₹99 & Get The Book"}
+          {paymentLoading ? "Opening Payment..." : "Pay ₹199 & Get The Book"}
         </button>
 
         <p className="secure-payment">

@@ -216,7 +216,7 @@ function Home() {
         </div>
 
         <div className="price-box">
-          <span>₹99</span>
+          <span>₹199</span>
 
           <button
             onClick={buyBook}
