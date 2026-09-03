@@ -16,7 +16,7 @@ function Navbar() {
   return (
     <nav className="navbar">
       <Link to="/" className="logo">
-        0% Business
+        Low Investment Business Book
       </Link>
 
       <div className="nav-links">

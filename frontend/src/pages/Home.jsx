@@ -77,9 +77,9 @@ function Home() {
     <div className="landing">
       <section className="hero">
         <div className="hero-content">
-          <span className="badge">DIGITAL BUSINESS BOOK</span>
+          <span className="badge">Digital Business Guide</span>
 
-          <h1>0% Investment Business</h1>
+          <h2>Low-Investment Business Ideas - Start Under ₹30,000</h2>
 
           <p className="hero-subtitle">
             Start a business without putting your savings at risk.
@@ -98,8 +98,8 @@ function Home() {
             {checkingPurchase
               ? "Checking..."
               : hasPurchased
-                ? "Read Your Book →"
-                : "Get The Book →"}
+                ? "Read Your PDFv →"
+                : "Get The PDF →"}
           </button>
 
           <p className="secure-text">🔒 Secure Razorpay payment</p>
@@ -109,13 +109,7 @@ function Home() {
           <div className="cover-card">
             <div className="cover-top">THE COMPLETE GUIDE</div>
 
-            <h2>0%</h2>
-
-            <h3>
-              INVESTMENT
-              <br />
-              BUSINESS
-            </h3>
+            <h3>Low-Investment Business Ideas - Start Under ₹30,000</h3>
 
             <div className="cover-line" />
 
@@ -132,7 +126,7 @@ function Home() {
 
       <section className="stats">
         <div>
-          <strong>0%</strong>
+          <strong>0%-100%</strong>
           <span>Investment Focus</span>
         </div>
 
@@ -158,35 +152,56 @@ function Home() {
         <div className="feature-grid">
           <div className="feature-card">
             <span>01</span>
-            <h3>Business Ideas</h3>
-            <p>
+            <h3>Profitable Business Ideas</h3>
+            {/* <p>
               Discover practical business models that don't require heavy
               initial investment.
-            </p>
+            </p> */}
           </div>
 
           <div className="feature-card">
             <span>02</span>
-            <h3>Start From Zero</h3>
-            <p>
+            <h3>Start with ₹0–₹30,000</h3>
+            {/* <p>
               Understand how to start with the resources and skills you already
               have.
-            </p>
+            </p> */}
           </div>
 
           <div className="feature-card">
             <span>03</span>
-            <h3>Find Customers</h3>
-            <p>
+            <h3>Step-by-Step Guidance</h3>
+            {/* <p>
               Learn simple approaches to reach potential customers without large
               advertising budgets.
-            </p>
+            </p> */}
           </div>
 
           <div className="feature-card">
             <span>04</span>
             <h3>Build & Grow</h3>
-            <p>Turn a small starting point into a repeatable business.</p>
+            {/* <p>Turn a small starting point into a repeatable business.</p> */}
+          </div>
+          <div className="feature-card">
+            <span>05</span>
+            <h3>Supplier & Manufacturer Sources</h3>
+            {/* <p>Turn a small starting point into a repeatable business.</p> */}
+          </div>
+
+          <div className="feature-card">
+            <span>06</span>
+            <h3>Marketing Tips for Every Business</h3>
+            {/* <p>Turn a small starting point into a repeatable business.</p> */}
+          </div>
+          <div className="feature-card">
+            <span>07</span>
+            <h3>Budget Comparison Table</h3>
+            {/* <p>Turn a small starting point into a repeatable business.</p> */}
+          </div>
+          <div className="feature-card">
+            <span>08</span>
+            <h3>Instant PDF</h3>
+            {/* <p>Turn a small starting point into a repeatable business.</p> */}
           </div>
         </div>
       </section>
@@ -195,7 +210,7 @@ function Home() {
         <div>
           <p>GET INSTANT ACCESS</p>
 
-          <h2>0% Investment Business</h2>
+          <h2>Low-Investment Business Ideas - Start Under ₹30,000</h2>
 
           <p>One-time purchase. Digital access.</p>
         </div>
@@ -246,7 +261,7 @@ function Home() {
       </section>
 
       <footer>
-        <h3>0% Investment Business</h3>
+        <h3>Low Investment Business Book</h3>
 
         <p>© 2026 All rights reserved.</p>
       </footer>
