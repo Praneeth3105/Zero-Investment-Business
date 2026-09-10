@@ -29,7 +29,7 @@ function Home() {
           },
         });
 
-        console.log("HOME BOOK STATUS:", response.data);
+        console.log("HOME PDF STATUS:", response.data);
 
         const purchased = response.data.hasPurchased === true;
 
@@ -137,7 +137,7 @@ function Home() {
 
         <div>
           <strong>24/7</strong>
-          <span>Book Access</span>
+          <span>PDF Access</span>
         </div>
       </section>
 

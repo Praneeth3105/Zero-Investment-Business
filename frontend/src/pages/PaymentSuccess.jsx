@@ -59,11 +59,11 @@ function PaymentSuccess() {
           <strong> Low Investment Business</strong>.
         </p>
 
-        <p>Your book has been added to your library.</p>
+        <p>Your PDF has been added to your library.</p>
 
         {!loading && (
           <Link to="/reader" className="primary-button">
-            Read Book →
+            Read PDF →
           </Link>
         )}
 

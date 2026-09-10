@@ -8,7 +8,6 @@ function Login() {
   const [form, setForm] = useState({
     name: "",
     email: "",
-    phone: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -16,7 +15,6 @@ function Login() {
   const handleChange = (e) => {
     setForm({
       ...form,
-
       [e.target.name]: e.target.value,
     });
   };
@@ -51,6 +49,7 @@ function Login() {
 
         <input
           name="name"
+          type="text"
           placeholder="Full Name"
           value={form.name}
           onChange={handleChange}
@@ -66,14 +65,11 @@ function Login() {
           required
         />
 
-        <input
-          name="phone"
-          placeholder="Mobile Number"
-          value={form.phone}
-          onChange={handleChange}
-        />
-
-        <button className="primary-button full" disabled={loading}>
+        <button
+          type="submit"
+          className="primary-button full"
+          disabled={loading}
+        >
           {loading ? "Sending..." : "Continue"}
         </button>
       </form>

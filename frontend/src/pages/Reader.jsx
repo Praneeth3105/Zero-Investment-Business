@@ -30,22 +30,22 @@ function Reader() {
           },
         );
 
-        console.log("Book access response:", response.data);
+        console.log("PDF access response:", response.data);
 
         if (!response.data?.success || !response.data?.url) {
-          throw new Error("Book URL was not returned");
+          throw new Error("PDF URL was not returned");
         }
 
         setPdfUrl(response.data.url);
       } catch (error) {
-        console.error("Book access error:", error);
+        console.error("PDF access error:", error);
 
         if (error.response?.status === 403) {
-          setError("You haven't purchased this book yet.");
+          setError("You haven't purchased this PDF yet.");
         } else if (error.response?.status === 401) {
           setError("Your login session has expired.");
         } else {
-          setError(error.response?.data?.message || "Unable to load the book.");
+          setError(error.response?.data?.message || "Unable to load the PDF.");
         }
       } finally {
         setLoading(false);
@@ -79,7 +79,7 @@ function Reader() {
     return (
       <div className="reader-loading">
         <div>
-          <h2>Opening your book...</h2>
+          <h2>Opening your PDF...</h2>
 
           <p>Verifying your purchase.</p>
         </div>
@@ -91,7 +91,7 @@ function Reader() {
     return (
       <div className="reader-error">
         <div className="reader-error-card">
-          <h2>Book Access</h2>
+          <h2>PDF Access</h2>
 
           <p>{error}</p>
 

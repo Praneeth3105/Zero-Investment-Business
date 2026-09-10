@@ -25,7 +25,7 @@ function Library() {
           },
         });
 
-        console.log("LIBRARY BOOK STATUS:", response.data);
+        console.log("LIBRARY PDF STATUS:", response.data);
 
         const hasPurchased = response.data.hasPurchased === true;
 
@@ -66,7 +66,7 @@ function Library() {
         <div>
           <span className="badge">MY LIBRARY</span>
 
-          <h1>Your Books</h1>
+          <h1>Your PDF's</h1>
         </div>
       </div>
 
@@ -74,7 +74,7 @@ function Library() {
         <div className="book-library-card">
           <div className="mini-cover">
             <h3>The Complete Guide</h3>
-            <h2>Low Investment Business Book</h2>
+            <h2>Low Investment Business PDFk</h2>
           </div>
 
           <div className="library-info">
@@ -86,16 +86,16 @@ function Library() {
               className="primary-button"
               onClick={() => navigate("/reader")}
             >
-              Read Book
+              Read PDF
             </button>
           </div>
         </div>
       ) : (
         <div className="empty">
-          <h2>No books yet</h2>
+          <h2>No PDF yet</h2>
 
           <button className="primary-button" onClick={() => navigate("/")}>
-            Browse Book
+            Browse PDF
           </button>
         </div>
       )}

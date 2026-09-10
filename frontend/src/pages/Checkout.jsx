@@ -118,9 +118,8 @@ function Checkout() {
 
       console.log("PAYMENT PRE-CHECK:", statusResponse.data);
 
-
       if (statusResponse.data.hasPurchased === true) {
-        alert("You have already purchased this book.");
+        alert("You have already purchased this PDF.");
 
         navigate("/reader");
 
@@ -134,7 +133,6 @@ function Checkout() {
           "Unable to load Razorpay. Please check your internet connection.",
         );
       }
-
 
       console.log("Creating Razorpay order...");
 
@@ -153,7 +151,7 @@ function Checkout() {
       console.log("Create order response:", response.data);
 
       if (response.data.alreadyPurchased === true) {
-        alert("You have already purchased this book.");
+        alert("You have already purchased this PDF.");
 
         navigate("/reader");
 
@@ -179,7 +177,7 @@ function Checkout() {
 
         name: "Low Investment Business",
 
-        description: "Digital Book Purchase",
+        description: "Digital PDF Purchase",
 
         order_id: orderId,
 
@@ -203,7 +201,6 @@ function Checkout() {
           try {
             console.log("Razorpay payment response:", paymentResponse);
 
-
             const verifyResponse = await axios.post(
               `${API_URL}/api/payment/verify`,
 
@@ -225,8 +222,6 @@ function Checkout() {
             console.log("Payment verification:", verifyResponse.data);
 
             if (verifyResponse.data.success) {
-
-
               const currentUser = JSON.parse(
                 localStorage.getItem("user") || "null",
               );
@@ -290,7 +285,7 @@ function Checkout() {
         error.response?.status === 409 &&
         error.response?.data?.alreadyPurchased
       ) {
-        alert("You have already purchased this book.");
+        alert("You have already purchased this PDF.");
 
         navigate("/reader");
 
@@ -329,7 +324,7 @@ function Checkout() {
         <div className="checkout-card">
           <span className="badge">ALREADY PURCHASED</span>
 
-          <h1>You Already Own This Book</h1>
+          <h1>You Already Own This PDF</h1>
 
           <p className="checkout-subtitle">
             Your purchase is already linked to your account.
@@ -339,7 +334,7 @@ function Checkout() {
             className="payment-button"
             onClick={() => navigate("/reader")}
           >
-            Read Your Book →
+            Read Your PDF →
           </button>
         </div>
       </div>
@@ -349,16 +344,16 @@ function Checkout() {
   return (
     <div className="checkout-page">
       <div className="checkout-card">
-        <span className="badge">DIGITAL BOOK</span>
+        <span className="badge">DIGITAL PDF</span>
 
         <h1>Low Investment Business</h1>
 
         <p className="checkout-subtitle">
-          Complete your purchase to unlock the book.
+          Complete your purchase to unlock the PDF.
         </p>
 
         <div className="checkout-product">
-          <span>Book</span>
+          <span>0 Business Investment</span>
 
           <strong>₹199</strong>
         </div>
@@ -382,7 +377,7 @@ function Checkout() {
           onClick={startPayment}
           disabled={paymentLoading}
         >
-          {paymentLoading ? "Opening Payment..." : "Pay ₹199 & Get The Book"}
+          {paymentLoading ? "Opening Payment..." : "Download the PDF "}
         </button>
 
         <p className="secure-payment">
