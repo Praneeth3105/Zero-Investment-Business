@@ -114,7 +114,6 @@ function Reader() {
 
           <span>Licensed to {user?.email}</span>
         </div>
-
         <button className="reader-back" onClick={() => navigate("/library")}>
           My Library
         </button>
