@@ -6,7 +6,7 @@ const credentials = JSON.parse(
   fs.readFileSync("./credentials/google-oauth.json", "utf8"),
 );
 
-const { client_id, client_secret, redirect_uris } = credentials.web;
+const { client_id, client_secret } = credentials.web;
 
 const redirectUri = "http://localhost:3000/oauth2callback";
 
@@ -22,11 +22,11 @@ const authUrl = oauth2Client.generateAuthUrl({
   scope: ["https://www.googleapis.com/auth/gmail.send"],
 });
 
-console.log("\n========================================");
-console.log("Open this URL in your browser:");
-console.log("========================================\n");
+console.log("\n====================================");
+console.log("OPEN THIS URL IN YOUR BROWSER:");
+console.log("====================================\n");
 console.log(authUrl);
-console.log("\n========================================\n");
+console.log("\n====================================\n");
 
 const server = http.createServer(async (req, res) => {
   if (!req.url.startsWith("/oauth2callback")) {
@@ -36,6 +36,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   const url = new URL(req.url, "http://localhost:3000");
+
   const code = url.searchParams.get("code");
 
   if (!code) {
@@ -47,17 +48,14 @@ const server = http.createServer(async (req, res) => {
   try {
     const { tokens } = await oauth2Client.getToken(code);
 
-    console.log("\n========================================");
+    console.log("\n====================================");
     console.log("AUTHORIZATION SUCCESSFUL");
-    console.log("========================================\n");
+    console.log("====================================\n");
 
-    console.log("REFRESH TOKEN:");
+    console.log("REFRESH TOKEN:\n");
     console.log(tokens.refresh_token);
 
-    console.log("\n========================================");
-    console.log("SAVE THIS TOKEN SECURELY.");
-    console.log("DO NOT PUT IT ON GITHUB.");
-    console.log("========================================\n");
+    console.log("\n====================================\n");
 
     res.writeHead(200, {
       "Content-Type": "text/html",
@@ -65,7 +63,7 @@ const server = http.createServer(async (req, res) => {
 
     res.end(`
       <h2>Gmail authorization successful!</h2>
-      <p>You can close this browser tab and return to PowerShell.</p>
+      <p>You can close this browser tab.</p>
     `);
 
     setTimeout(() => {
@@ -73,7 +71,10 @@ const server = http.createServer(async (req, res) => {
       process.exit(0);
     }, 1000);
   } catch (error) {
-    console.error("TOKEN ERROR:", error);
+    console.error(
+      "TOKEN ERROR:",
+      error.response?.data || error.message || error,
+    );
 
     res.writeHead(500);
     res.end("Failed to obtain authorization token.");
