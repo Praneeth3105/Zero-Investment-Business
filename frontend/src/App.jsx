@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import VerifyOTP from "./pages/VerifyOTP";
@@ -7,9 +6,7 @@ import Checkout from "./pages/Checkout";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Library from "./pages/Library";
 import Reader from "./pages/Reader";
-
 import Navbar from "./components/Navbar";
-
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
