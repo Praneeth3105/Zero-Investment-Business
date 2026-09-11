@@ -80,7 +80,6 @@ function Reader() {
       <div className="reader-loading">
         <div>
           <h2>Opening your PDF...</h2>
-
           <p>Verifying your purchase.</p>
         </div>
       </div>
