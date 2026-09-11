@@ -106,7 +106,6 @@ function Checkout() {
 
       return;
     }
-
     setPaymentLoading(true);
 
     try {
@@ -117,12 +116,10 @@ function Checkout() {
       });
 
       console.log("PAYMENT PRE-CHECK:", statusResponse.data);
-
       if (statusResponse.data.hasPurchased === true) {
         alert("You have already purchased this PDF.");
 
         navigate("/reader");
-
         return;
       }
 
