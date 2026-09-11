@@ -76,12 +76,9 @@ function Library() {
             <h3>The Complete Guide</h3>
             <h2>Low Investment Business PDFk</h2>
           </div>
-
           <div className="library-info">
             <h2>Low-Investment Business Ideas - Start Under ₹30,000 </h2>
-
             <p>Digital Business Playbook</p>
-
             <button
               className="primary-button"
               onClick={() => navigate("/reader")}
