@@ -143,7 +143,6 @@ function Home() {
 
       <section className="section">
         <h2>What You'll Discover</h2>
-
         <p className="section-intro">
           Learn practical ways to turn skills, ideas and available resources
           into business opportunities.
@@ -209,9 +208,7 @@ function Home() {
       <section className="price-section">
         <div>
           <p>GET INSTANT ACCESS</p>
-
           <h2>Low-Investment Business Ideas - Start Under ₹30,000</h2>
-
           <p>One-time purchase. Digital access.</p>
         </div>
 
