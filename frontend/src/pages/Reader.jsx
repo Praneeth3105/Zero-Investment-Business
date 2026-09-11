@@ -91,9 +91,7 @@ function Reader() {
       <div className="reader-error">
         <div className="reader-error-card">
           <h2>PDF Access</h2>
-
           <p>{error}</p>
-
           <button
             className="primary-button"
             onClick={() => navigate("/library")}
@@ -110,7 +108,6 @@ function Reader() {
       <div className="reader-toolbar">
         <div className="reader-title">
           <strong>Low Investment Business</strong>
-
           <span>Licensed to {user?.email}</span>
         </div>
         <button className="reader-back" onClick={() => navigate("/library")}>
