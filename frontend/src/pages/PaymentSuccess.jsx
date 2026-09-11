@@ -49,16 +49,12 @@ function PaymentSuccess() {
     <div className="success-page">
       <div className="success-card">
         <div className="success-icon">✓</div>
-
         <span className="badge">PAYMENT CONFIRMED</span>
-
         <h1>Payment Successful</h1>
-
         <p>
           Thank you for purchasing
           <strong> Low Investment Business</strong>.
         </p>
-
         <p>Your PDF has been added to your library.</p>
 
         {!loading && (
