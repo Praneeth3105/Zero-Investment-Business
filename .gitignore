@@ -1,37 +1,74 @@
-# Dependencies
+# ==========================================
+# NODE
+# ==========================================
+
 node_modules/
 **/node_modules/
 
-# Environment variables
+
+# ==========================================
+# ENVIRONMENT VARIABLES / SECRETS
+# ==========================================
+
 .env
 .env.*
 !.env.example
 
-# Build files
+
+# ==========================================
+# BUILD FILES
+# ==========================================
+
 dist/
 **/dist/
+
 build/
 **/build/
 
-# Logs
+
+# ==========================================
+# LOG FILES
+# ==========================================
+
 *.log
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# IDE
+
+# ==========================================
+# IDE / OS
+# ==========================================
+
 .vscode/
 .idea/
-
-# OS
 .DS_Store
 Thumbs.db
 
-# Private paid book
+
+# ==========================================
+# PRIVATE BOOK FILES
+# ==========================================
+
 backend/private/
+backend/book-pages/
 
-# Other local files
-*.local
 
+# ==========================================
+# GOOGLE OAUTH CREDENTIALS
+# ==========================================
+
+backend/credentials/
 credentials/
+
+google-oauth.json
+**/google-oauth.json
+
+
+# ==========================================
+# LOCAL FILES
+# ==========================================
+
+*.local
